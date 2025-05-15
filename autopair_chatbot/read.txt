@@ -1,0 +1,146 @@
+# === Modular Warranty Knowledge ===
+KNOWLEDGE_OVERVIEW = """
+🏆 Welcome to Autopair Warranty — Canada's Most Trusted Direct-to-Consumer Auto Warranty.
+
+We are transforming how Canadians protect their vehicles by:
+- Offering **coverage for all makes and models**
+- Providing access to **ANY licensed repair facility** in Canada or the US
+- Saving you up to **250% vs dealership markups**
+- Including **$0 deductible** in every plan — no extra cost for repairs
+- Eliminating dealership upsells, quotes, inspections, or hidden fees
+
+Trusted, insured, and backed by industry professionals:
+- 30+ years combined experience in automotive sales
+- Highly rated on Google and BBB
+- Thousands of satisfied customers across North America
+
+Compare us with others:
+- 💡 No quotes required, instant pricing
+- 🛠️ No forced repair centers — choose any licensed shop
+- 💳 Flexible payment options (bi-weekly or monthly), interest-FREE on approved credit
+"""
+
+PLAN_DETAILS = """
+🚘 Autopair Warranty Plans
+
+1. 🔹 STANDARD PLAN
+   - Duration: 24 months / Unlimited KM
+   - Price: $1299 or 6 bi-weekly payments of $217
+   - Repair Limit: $3,000 per claim
+   - Includes: Powertrain, electrical, brakes, A/C, transmission
+   - Excludes: Suspension, high-tech, sensors, hybrid
+   - Surcharge: $0 (premium), $499 (exotic)
+
+2. 🔹 THE WORKS PLAN
+   - Duration: 24 months / 50,000 KM
+   - Price: $1799 or 18 monthly payments of $100
+   - Repair Limit: $6,000 per claim
+   - Includes: All items in Standard + suspension, sensors, hybrid, electronics
+   - Surcharge: $299 (premium), $499 (exotic)
+
+3. 🔹 THE WORKS PLUS PLAN
+   - Duration: 48 months / 100,000 KM
+   - Price: $2599 or 18 monthly payments of $145
+   - Same coverage as THE WORKS, with double the term + km
+   - Surcharge: Same as WORKS
+
+🟩 Plan Eligibility:
+- STANDARD: Vehicle must be ≤10 years & <200,000 KM
+- WORKS / PLUS: Vehicle must be ≤6 years & <120,000 KM
+"""
+
+COVERAGE_COMPARISON = """
+📊 Coverage Comparison by Plan
+
+| Component                        | STANDARD | WORKS | WORKS PLUS |
+|----------------------------------|----------|--------|-------------|
+| Engine (gas/diesel)             | ✅       | ✅     | ✅          |
+| Transmission (auto/manual)      | ✅       | ✅     | ✅          |
+| Differentials (front/rear)      | ✅       | ✅     | ✅          |
+| Transfer Case (4x4)             | ✅       | ✅     | ✅          |
+| Turbo / Supercharger            | ✅       | ✅     | ✅          |
+| Seals & Gaskets (major)         | ✅       | ✅     | ✅          |
+| Front Suspension                | ❌       | ✅     | ✅          |
+| Rear Suspension                 | ❌       | ✅     | ✅          |
+| Steering System                 | ✅       | ✅     | ✅          |
+| Cooling System                  | ✅       | ✅     | ✅          |
+| Brakes                          | ✅       | ✅     | ✅          |
+| Electrical System               | ✅       | ✅     | ✅          |
+| Air Conditioning                | ✅       | ✅     | ✅          |
+| High-Tech & Electronics         | ❌       | ✅     | ✅          |
+| Sensors (ABS, O2, etc.)         | ❌       | ✅     | ✅          |
+| Hybrid Vehicle Components       | ❌       | ✅     | ✅          |
+| Courtesy Rental ($350 max)      | ✅       | ✅     | ✅          |
+| Towing ($100 max)               | ✅       | ✅     | ✅          |
+| Trip Interruption ($750 max)    | ✅       | ✅     | ✅          |
+| $0 Deductible                   | ✅       | ✅     | ✅          |
+"""
+
+CLAIMS_INFO = """
+🛠️ Autopair Warranty — Claims Process (Simple 4-Step Guide)
+
+1. 🏁 Choose Your Repair Shop  
+   - Take your vehicle to ANY licensed repair facility across Canada or the USA.  
+   - You’re not limited to dealers or pre-approved shops.
+
+2. 🔍 Get a Diagnostic Report  
+   - Ask the mechanic for a full diagnostic report.  
+   - Submit the report through Autopair’s online claims portal.
+
+3. ✅ Wait for Approval (12–24 hours)  
+   - If the issue is covered in your plan, it’s approved.  
+   - Wait for Autopair to confirm before approving any repairs.
+
+4. 💰 Receive Payment  
+   - Choose either:  
+     1. Payment via your Autopair prepaid card  
+     2. Direct Interac e-Transfer  
+   - All payments are processed through email after approval.
+
+⏳ Wait Period:  
+- Coverage begins after 30 days + 1,500 km from warranty purchase date.  
+- Claims cannot be made before this period is completed.
+
+🛑 Reminders:  
+- Do not authorize repairs until approval is received.  
+- Coverage applies to **listed components only**.  
+- **Inspection is not required at purchase**, but is required at time of claim.
+- **Maintenance required**: oil + filter every 6 months or 12,000 km.
+"""
+
+FAQS = """
+❓ Frequently Asked Questions (FAQs)
+
+1. **What is a factory or manufacturer’s warranty?**  
+Every new vehicle comes with a factory warranty that covers non-wear & tear parts. Once it expires, you’re on your own. Autopair fills that gap with extended coverage.
+
+2. **Why not just get this from a dealer?**  
+Dealers charge 2–3x more and force you to use specific repair centers. Autopair lets you choose your shop and buy directly — saving you thousands.
+
+3. **I still have factory coverage. Why buy now?**  
+You can defer Autopair coverage to begin right after your manufacturer warranty ends — up to 12 months in advance.
+
+4. **My dealer gave me a 3-month warranty. What should I do?**  
+You can still purchase Autopair and set it to start after the dealer plan ends.
+
+5. **Can I transfer my plan if I sell the car?**  
+Yes! Plans are fully transferable to the next owner. Just contact support.
+
+6. **What happens during a breakdown?**  
+Refer to the claims process: get a diagnosis, submit it, get approval, and choose your payment method (card or e-transfer).
+
+7. **Are you better than other warranty companies?**  
+Yes — we cut out middlemen, offer direct pricing, allow any licensed repair shop, and include $0 deductible on all plans.
+
+8. **Can I cancel my plan?**  
+Yes, within 10 days of purchase and no claims made. A $99 fee applies. After 10 days, plans are non-cancellable and non-refundable.
+
+9. **Is there a limit to how many claims I can make?**  
+No limit to the number of claims — but the max per claim is $3,000 (Standard) or $6,000 (Works), and total claim value cannot exceed the vehicle’s acquisition cost.
+
+10. **Do I need to maintain the vehicle?**  
+Yes. You must do oil + filter changes every 6 months or 12,000 km to keep coverage valid.
+
+11. **Do I need an inspection to buy a plan?**  
+No inspection is required to purchase. However, one is needed to process a claim.
+"""
