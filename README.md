@@ -58,7 +58,7 @@ python main.py
 
 
 
-
+<!-- 
 git init
 git add README.md
 git commit -m "first commit"
@@ -70,4 +70,4 @@ git push -u origin main
 
 
 chmod 400 your-key.pem
-ssh -i "your-key.pem" ubuntu@54.211.4.177
+ssh -i "your-key.pem" ubuntu@54.211.4.177 -->

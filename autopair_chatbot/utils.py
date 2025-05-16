@@ -127,10 +127,8 @@ CLAIMS_INFO = """
    - Wait for Autopair to confirm before approving any repairs.
 
 4. 💰 Receive Payment  
-   - Choose either:  
-     1. Payment via your Autopair prepaid card  
-     2. Direct Interac e-Transfer  
-   - All payments are processed through email after approval.
+   - All payments are sent via **Interac e-Transfer** to your email.  
+   - Once your claim is approved, payment is typically processed within 1 business day.
 
 ⏳ Wait Period:  
 - Coverage begins after 30 days + 1,500 km from warranty purchase date.  
@@ -180,8 +178,9 @@ Yes. You must do oil + filter changes every 6 months or 12,000 km to keep covera
 No inspection is required to purchase. However, one is needed to process a claim.
 """
 
-def send_qualification_sms(lead, qualification):
-    """Send personalized qualification SMS via Twilio"""
+def send_qualification_sms(lead):
+    """Send SMS using the original Alexis message from props"""
+    from autopair_chatbot.utils import build_detailed_qualification_message
     props = lead.get("properties", {})
     phone = format_phone_number(props.get("phone", ""))
 
@@ -300,7 +299,7 @@ def get_ai_response(question, context=""):
             section = KNOWLEDGE_OVERVIEW
 
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o",
             messages=[
                 {
                     "role": "system",
@@ -455,7 +454,7 @@ def build_detailed_qualification_message(props):
     make = props.get("vehicle_make", "")
     model = props.get("vehicle_model", "")
     km = props.get("vehicle_mileage", "unknown")
-    plans = props.get("autopair_qualified_plans", "").lower()
+    plans = (props.get("autopair_qualified_plans") or "").lower()
 
     premium_surcharge = props.get("premium_surcharge", False)
     exotic_surcharge = props.get("exotic_surcharge", False)
@@ -467,7 +466,7 @@ def build_detailed_qualification_message(props):
         surcharge_text = "Exotic Surcharge of $499 applies."
 
     if "standard" in plans and "works" not in plans:
-        return f"""Hey {first_name} it’s Alexis from Autopair Warranty. You just filled out a form requesting some information regarding warranty coverage for a vehicle.
+        return f"""Hey {first_name}, it’s Alexis from Autopair Warranty. You just filled out a form requesting some information regarding warranty coverage for a vehicle.
 
 Great news! Your vehicle {year} {make} {model} with {km} km qualifies for our Standard Plan
 
@@ -492,7 +491,7 @@ Please reply with 1, 2, or 3, and I’ll assist you right away.
 Msg & data rates may apply. This is a text-only number. Reply STOP to opt out."""
 
     elif "works" in plans:
-        return f"""Hey {first_name} it’s Alexis from Autopair Warranty. You just filled out a form requesting some information regarding warranty coverage for a vehicle.
+        return f"""Hey {first_name}, it’s Alexis from Autopair Warranty. You just filled out a form requesting some information regarding warranty coverage for a vehicle.
 
 Great news! Your vehicle {year} {make} {model} with {km} km qualifies for our Works Plan and Works Plus Plan
 

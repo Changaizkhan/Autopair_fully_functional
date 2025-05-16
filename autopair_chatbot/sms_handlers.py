@@ -99,7 +99,7 @@ def handle_schedule_request(lead):
 
 def handle_question_request(lead):
     phone = format_phone_number(lead.get("properties", {}).get("phone"))
-    send_sms(phone, "What would you like to know about your warranty options?")
+    send_sms(phone, "Absolutely, I’m here to help!\nWhat would you like to know more about?")
 
     update_lead_in_hubspot(lead["id"], {
         "properties": {
@@ -108,6 +108,7 @@ def handle_question_request(lead):
         }
     })
     return jsonify({"status": "success", "action": "Question requested"})
+
 
 
 # def handle_schedule_submission(lead, schedule_text):
@@ -174,7 +175,6 @@ def handle_schedule_submission(lead, schedule_text):
     update_lead_in_hubspot(lead["id"], update_data)
     return jsonify({"status": "success"})
 
-
 def handle_question_submission(lead, question):
     props = lead.get("properties", {})
     phone = format_phone_number(props.get("phone", ""))
@@ -183,17 +183,53 @@ def handle_question_submission(lead, question):
         return jsonify({"status": "error", "message": "Invalid phone number"}), 400
 
     context = f"Customer: {props.get('firstname', '')}, Vehicle: {props.get('vehicle_year', '')} {props.get('vehicle_make', '')} {props.get('vehicle_model', '')}, Qualified plans: {props.get('autopair_qualified_plans', 'Unknown')}"
+
+    # 🔍 Force fallback if question is vague, confusing, or silly
+    lower_question = question.strip().lower()
+    force_fallback = any(
+        phrase in lower_question
+        for phrase in [
+            "idk", "i don't know", "not sure", "maybe", "confused",
+            "no idea", "help me", "can't decide",
+            "cat drives", "cat driving", "what if my cat",
+            "dog drives", "pet driving", "can my pet",
+            "i'm lost", "don't understand", "talk to someone"
+        ]
+    )
+
     ai_response = get_ai_response(question, context)
-    if not ai_response or "trouble" in ai_response:
-        ai_response = "A specialist will contact you shortly to assist further."
+
+    if (
+        force_fallback
+        or not ai_response
+        or "trouble" in ai_response.lower()
+        or "not sure" in ai_response.lower()
+        or "can't answer" in ai_response.lower()
+        or "unsure" in ai_response.lower()
+        or "not confident" in ai_response.lower()
+        or "you should talk to" in ai_response.lower()
+    ):
+        ai_response = (
+            "That’s a great question! I want to make sure you get the most accurate answer.\n"
+            "Would you like one of our warranty specialists to give you a quick call and walk you through everything?\n\n"
+            "1️⃣ Call me now\n2️⃣ Schedule a call"
+        )
+
+        update_lead_in_hubspot(lead["id"], {
+            "properties": {
+                "autopair_status": "Awaiting Schedule",
+                "autopair_last_question": question,
+                "autopair_last_response": int(now_in_toronto().timestamp() * 1000)
+            }
+        })
+    else:
+        update_lead_in_hubspot(lead["id"], {
+            "properties": {
+                "autopair_status": "Question Answered",
+                "autopair_last_question": question,
+                "autopair_last_response": int(now_in_toronto().timestamp() * 1000)
+            }
+        })
 
     send_sms(phone, ai_response)
-
-    update_lead_in_hubspot(lead["id"], {
-        "properties": {
-            "autopair_status": "Question Answered",
-            "autopair_last_question": question,
-            "autopair_last_response": int(now_in_toronto().timestamp() * 1000)
-        }
-    })
     return jsonify({"status": "success", "response": ai_response})

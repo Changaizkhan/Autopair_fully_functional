@@ -114,27 +114,34 @@ def hubspot_webhook():
     return jsonify({"status": "received"}), 200
 
 def create_call_task_in_hubspot(lead, when_label="ASAP"):
-    from autopair_chatbot.config import HUBSPOT_API_KEY
-    import requests
-
-    contact_id = lead.get("id")
     props = lead.get("properties", {})
-    name = props.get("firstname", "Customer")
-    vehicle = f"{props.get('vehicle_year')} {props.get('vehicle_make')} {props.get('vehicle_model')}".strip()
-    phone = props.get("phone", "")
+    contact_id = lead.get("id") or props.get("hs_object_id")
 
+    if not contact_id:
+        logger.error("❌ Missing contact ID for task creation.")
+        return False
+
+    name = f"{props.get('firstname', '')} {props.get('lastname', '')}".strip() or "Customer"
+    phone = props.get("phone", "")
+    
     task_data = {
         "properties": {
-            "hs_task_body": f"📞 Call {name} regarding their {vehicle}. Phone: {phone}",
             "hs_task_subject": f"Call {name} @ {when_label}",
-            "hs_timestamp": int(time.time() * 1000) + 300000,  # 5 minutes from now
+            "hs_task_body": f"📞 Call {name} about their vehicle. Phone: {phone}",
+            "hs_timestamp": int(time.time() * 1000) + 5 * 60 * 1000,  # 5 minutes from now
             "hs_task_priority": "HIGH",
-            "hs_task_status": "NOT_STARTED"
+            "hs_task_status": "NOT_STARTED",
+            "hs_task_type": "CALL"  # Explicitly set task type
         },
         "associations": [
             {
-                "to": { "id": contact_id },
-                "types": [{ "associationCategory": "HUBSPOT_DEFINED", "associationTypeId": 3 }]  # 3 = contact-to-task
+                "to": {"id": contact_id},
+                "types": [
+                    {
+                        "associationCategory": "HUBSPOT_DEFINED",
+                        "associationTypeId": 204  # Correct association type for task-to-contact
+                    }
+                ]
             }
         ]
     }
@@ -144,12 +151,17 @@ def create_call_task_in_hubspot(lead, when_label="ASAP"):
         "Content-Type": "application/json"
     }
 
-    url = "https://api.hubapi.com/crm/v3/objects/tasks"
-
     try:
-        response = requests.post(url, headers=headers, json=task_data)
+        response = requests.post(
+            "https://api.hubapi.com/crm/v3/objects/tasks",
+            headers=headers,
+            json=task_data
+        )
         response.raise_for_status()
-        logger.info(f"✅ Created HubSpot call task for lead {name}")
-        logger.info(f"📝 Task payload:\n{json.dumps(task_data, indent=2)}")
-    except Exception as e:
-        logger.error(f"❌ Failed to create HubSpot task: {e}")
+        logger.info(f"✅ Successfully created task for contact {contact_id}")
+        return True
+    except requests.exceptions.RequestException as e:
+        logger.error(f"❌ Task creation failed: {e}")
+        if hasattr(e, 'response') and e.response is not None:
+            logger.error(f"Response:\n{e.response.text}")
+        return False

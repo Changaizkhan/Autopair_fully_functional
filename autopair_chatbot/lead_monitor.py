@@ -30,7 +30,7 @@ def lead_monitor_loop():
 
     while True:
         try:
-            time.sleep(60)
+            time.sleep(20)
             logger.info("Checking for new leads...")
             latest_leads = fetch_latest_leads()
             new_leads = identify_new_leads(latest_leads)
@@ -102,10 +102,8 @@ def identify_new_leads(leads):
 
 
 def process_new_lead(lead_id):
-    from autopair_chatbot.hubspot import fetch_lead_details
-    from autopair_chatbot.sms_handlers import handle_question_submission, handle_schedule_submission
-    from autopair_chatbot.utils import qualify_plans, send_qualification_sms
-
+    from autopair_chatbot.hubspot import fetch_lead_details, find_lead_by_phone, update_lead_in_hubspot
+    from autopair_chatbot.utils import qualify_plans, send_qualification_sms, format_phone_number, now_in_toronto
     global processing_locks
 
     if lead_id in processing_locks:
@@ -135,17 +133,22 @@ def process_new_lead(lead_id):
         update_data = {
             "properties": {
                 "autopair_qualified": str(qualification["qualified"]).lower(),
-                "autopair_qualified_plans": ", ".join([p["name"] for p in qualification.get("plans", [])])
+                "autopair_qualified_plans": ", ".join([p["name"] for p in qualification.get("plans", [])]),
+                "autopair_processed": "true",
+                "autopair_last_processed": int(now_in_toronto().timestamp() * 1000)
             }
         }
 
-        if send_qualification_sms(lead, qualification):
-            update_data["properties"].update({
-                "autopair_processed": "true",
-                "autopair_last_processed": int(now_in_toronto().timestamp() * 1000)
-            })
-
+        # Step 1: Update HubSpot with qualification info
         update_lead_in_hubspot(lead_id, update_data)
+
+        # Step 2: Re-fetch lead to get latest props
+        phone = format_phone_number(props.get("phone", ""))
+        refreshed_lead = find_lead_by_phone(phone)
+
+        # Step 3: Send the correct full message
+        if refreshed_lead:
+            send_qualification_sms(refreshed_lead)
 
     except Exception as e:
         logger.error(f"Error processing lead {lead_id}: {e}")

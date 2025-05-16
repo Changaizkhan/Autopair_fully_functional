@@ -4,6 +4,9 @@ node_modules/
 # Environment files (contains sensitive information like API keys)
 .env
 
+venv
+autopair.pem
+
 # Log files
 *.log
 
