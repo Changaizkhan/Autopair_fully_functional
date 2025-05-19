@@ -110,34 +110,6 @@ def handle_question_request(lead):
     return jsonify({"status": "success", "action": "Question requested"})
 
 
-
-# def handle_schedule_submission(lead, schedule_text):
-#     from autopair_chatbot.utils import parse_schedule_text
-
-#     phone = format_phone_number(lead.get("properties", {}).get("phone"))
-#     scheduled_time = parse_schedule_text(schedule_text)
-
-#     if scheduled_time:
-#         formatted_time = scheduled_time.strftime("%A, %B %d at %I:%M %p")
-#         send_sms(phone, f"Thank you! We've scheduled your callback for {formatted_time} (Eastern Time).")
-#         update_data = {
-#             "properties": {
-#                 "autopair_status": "Call Scheduled",
-#                 "autopair_scheduled_time": int(scheduled_time.timestamp() * 1000),
-#                 "autopair_last_response": now_in_toronto().isoformat()
-#             }
-#         }
-#     else:
-#         send_sms(phone, "I didn't understand that time. Please try again (e.g. 'Friday 2pm').")
-#         update_data = {
-#             "properties": {
-#                 "autopair_last_response": now_in_toronto().isoformat()
-#             }
-#         }
-
-#     update_lead_in_hubspot(lead["id"], update_data)
-#     return jsonify({"status": "success"})
-
 def handle_schedule_submission(lead, schedule_text):
     from autopair_chatbot.utils import parse_schedule_text
     from datetime import time as dt_time
