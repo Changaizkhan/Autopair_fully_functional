@@ -189,6 +189,7 @@ def send_qualification_sms(lead):
         return False
 
     try:
+        props = set_surcharge_flags(props)
         message = build_detailed_qualification_message(props)
         logger.info(f"📲 Sending SMS to {phone} with message:\n{message}")
         twilio_client.messages.create(
@@ -447,6 +448,29 @@ def get_vehicle_info(lead):
         "plans": props.get("autopair_qualified_plans", "Unknown"),
         "customer": props.get("firstname", "Customer")
     }
+
+def set_surcharge_flags(props):
+    premium_makes = ["audi", "bmw", "land rover", "mercedes-benz"]
+    exotic_makes = [
+        "acura nsx", "alfa romeo", "aston martin", "audi r", "audi s",
+        "bmw m", "bugatti", "bentley", "corvette", "cadillac xlr", "cadillac cts-v",
+        "dodge ram srt10", "viper", "ferrari", "ford gt40", "jaguar", "lamborghini",
+        "lexus lfa", "maserati", "mercedes amg", "porsche", "lotus", "maybach",
+        "mclaren", "nissan gtr", "rolls-royce", "volkswagen arteon rline"
+    ]
+
+    make = (props.get("vehicle_make") or "").lower()
+    model = (props.get("vehicle_model") or "").lower()
+    make_model = f"{make} {model}"
+
+    if any(exotic in make_model for exotic in exotic_makes):
+        props["exotic_surcharge"] = True
+    elif make in premium_makes:
+        props["premium_surcharge"] = True
+
+    return props
+
+
 
 def build_detailed_qualification_message(props):
     first_name = props.get("firstname", "there")

@@ -147,65 +147,6 @@ def handle_schedule_submission(lead, schedule_text):
     update_lead_in_hubspot(lead["id"], update_data)
     return jsonify({"status": "success"})
 
-# def handle_question_submission(lead, question):
-#     props = lead.get("properties", {})
-#     phone = format_phone_number(props.get("phone", ""))
-
-#     if not phone:
-#         return jsonify({"status": "error", "message": "Invalid phone number"}), 400
-
-#     context = f"Customer: {props.get('firstname', '')}, Vehicle: {props.get('vehicle_year', '')} {props.get('vehicle_make', '')} {props.get('vehicle_model', '')}, Qualified plans: {props.get('autopair_qualified_plans', 'Unknown')}"
-
-#     # 🔍 Force fallback if question is vague, confusing, or silly
-#     lower_question = question.strip().lower()
-#     force_fallback = any(
-#         phrase in lower_question
-#         for phrase in [
-#             "idk", "i don't know", "not sure", "maybe", "confused",
-#             "no idea", "help me", "can't decide",
-#             "cat drives", "cat driving", "what if my cat",
-#             "dog drives", "pet driving", "can my pet",
-#             "i'm lost", "don't understand", "talk to someone"
-#         ]
-#     )
-
-#     ai_response = get_ai_response(question, context)
-
-#     if (
-#         force_fallback
-#         or not ai_response
-#         or "trouble" in ai_response.lower()
-#         or "not sure" in ai_response.lower()
-#         or "can't answer" in ai_response.lower()
-#         or "unsure" in ai_response.lower()
-#         or "not confident" in ai_response.lower()
-#         or "you should talk to" in ai_response.lower()
-#     ):
-#         ai_response = (
-#             "That’s a great question! I want to make sure you get the most accurate answer.\n"
-#             "Would you like one of our warranty specialists to give you a quick call and walk you through everything?\n\n"
-#             "1️⃣ Call me now\n2️⃣ Schedule a call"
-#         )
-
-#         update_lead_in_hubspot(lead["id"], {
-#             "properties": {
-#                 "autopair_status": "Awaiting Schedule",
-#                 "autopair_last_question": question,
-#                 "autopair_last_response": int(now_in_toronto().timestamp() * 1000)
-#             }
-#         })
-#     else:
-#         update_lead_in_hubspot(lead["id"], {
-#             "properties": {
-#                 "autopair_status": "Question Answered",
-#                 "autopair_last_question": question,
-#                 "autopair_last_response": int(now_in_toronto().timestamp() * 1000)
-#             }
-#         })
-
-#     send_sms(phone, ai_response)
-#     return jsonify({"status": "success", "response": ai_response})
-
 
 def handle_question_submission(lead, question):
     props = lead.get("properties", {})
@@ -252,6 +193,12 @@ def handle_question_submission(lead, question):
             }
         })
     else:
+        followup_prompt = (
+            "\n\nWould you like to speak with a specialist? You can:\n"
+            "1️⃣ Get a call now\n"
+            "2️⃣ Schedule a call"
+        )
+        ai_response += followup_prompt
         update_lead_in_hubspot(lead["id"], {
             "properties": {
                 "autopair_status": "Question Answered",
